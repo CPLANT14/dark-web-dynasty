@@ -129,6 +129,7 @@ const HOME=s=>{const AP=allPlay(s),W=weekly(s),A=awards(s,W),H=headline(s,W,A),o
  const mt=Object.values(mc).reduce((a,b)=>a+b,0),mtop=Object.entries(mc).sort((a,b)=>b[1]-a[1])[0];
  const ent=PICKS.filter(m=>m.picks),ch={};ent.forEach(m=>ch[m.picks[6]]=(ch[m.picks[6]]||0)+1);const cht=Object.entries(ch).sort((a,b)=>b[1]-a[1])[0];
  ST=buildStories(s,W,A,o,{started,g,gl:{name:gl.name,av:(s.teams.find(q=>q.user.toLowerCase()==gl.name.toLowerCase())||{}).av,with_bonus:gl.with_bonus},mt,mtop,final:s.status=='complete'});
+ TICK=buildTicker(s,W);
  const wlabel=s.status=='complete'?'SEASON COMPLETE':`WEEK ${s.week}${started?' · IN PROGRESS':' · UPCOMING'}`;
  return `${calBanner()}<div class="hero" style="padding:6px 0 0"><h1 style="font-size:clamp(28px,5vw,44px)">THE GRID</h1><p>DARK WEB DYNASTY 1 // SEASON ${s.season} // ${wlabel}</p></div>
 ${NCSS}<div class="nw" id="nw"></div>
@@ -137,11 +138,6 @@ ${NCSS}<div class="nw" id="nw"></div>
 <div class="box"><h3 class="rus" style="color:var(--g);margin-bottom:8px">Awards</h3>${A.list.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--deep)"><span style="font-size:22px">${a[0]}</span><span style="flex:1"><small style="color:var(--dim);letter-spacing:1px">${a[1].toUpperCase()}</small><br>${a[2]}</span><span style="color:var(--amber);font-size:12px">${a[3]}</span></div>`).join('')}</div></div>
 <div class="sec" style="margin-top:20px"><h2>Standings</h2><p>Season ${s.season} · wins, then points for · ${s.live?'live from Sleeper':'snapshot'} · dots: last 5 results, ▲ 2+ wins in last 3, ▼ none</p></div>
 <div class="box"><table><thead><tr><th>#</th><th>Manager</th><th class="n">W-L-T</th><th>Last 5</th><th class="n">PF</th><th class="n">PA</th><th class="n">Diff</th><th class="n">All-Play</th><th class="n">AP%</th><th class="n">xWins</th><th class="n">WOE</th></tr></thead><tbody>${o.map((t,i)=>{const r=W[t.rid].res,a=AP[t.rid],ag=a.w+a.l+a.t,ap=ag?(a.w+a.t/2)/ag:0,gp=t.w+t.l+(t.t||0),xw=ap*gp,woe=t.w+(t.t||0)/2-xw;return `<tr class="${t.user==ME?'me':''}"><td>${i+1}</td><td><img class="av" src="${av(t.av)}">${t.user}</td><td class="n">${t.w}-${t.l}${t.t?'-'+t.t:''}</td><td>${dots(r)} ${arrow(r)}</td><td class="n">${t.pf.toFixed(2)}</td><td class="n">${t.pa.toFixed(2)}</td><td class="n" style="color:${t.pf-t.pa>=0?'var(--g)':'#ff6b6b'}">${(t.pf-t.pa>0?'+':'')+(t.pf-t.pa).toFixed(1)}</td><td class="n">${a.w}-${a.l}${a.t?'-'+a.t:''}</td><td class="n">${(ap*100).toFixed(1)}%</td><td class="n">${xw.toFixed(2)}</td><td class="n" style="color:${woe>=0.05?'var(--g)':woe<=-0.05?'#ff6b6b':'var(--dim)'}">${(woe>0?'+':'')+woe.toFixed(2)}</td></tr>`}).join('')}</tbody></table><div class="note">All-Play: each week's score against every other team's score that week (win = higher score, tie = half). AP% = all-play wins / games. xWins = AP% × games played. WOE (wins over expected) = wins − xWins. Higher WOE = luckier, lower = unluckier. Completed weeks only.</div></div>
-<div class="sec" style="margin-top:20px"><h2>Operations</h2><p>Side games at a glance</p></div>
-<div class="tiles" style="margin-top:12px"><a class="tile" href="#/grid-projections"><span class="tag">${s.status=='complete'?'FINAL':'NOT FINAL'}</span><h3>Grid Projections</h3><p>Leader: <b style="color:var(--g)">${gl.name}</b> with ${gl.with_bonus} pts</p></a>
-<a class="tile" href="#/market-surge"><span class="tag">RAFFLE</span><h3>Market Surge</h3><p>${mt} entries in the Jun window. Best odds: <b style="color:var(--g)">${team(s,mtop[0]).user}</b> (${(mtop[1]/mt*100).toFixed(1)}%)</p></a>
-<a class="tile" href="#/league-projections"><span class="tag">LOCKED</span><h3>League Projections</h3><p>Most picked champion: <b style="color:var(--g)">${cht[0]}</b> (${cht[1]} of ${ent.length})</p></a>
-</div>
 <div class="sec"><h2>Latest moves</h2><p>${s.live?'Live from Sleeper':'Snapshot (Sleeper unreachable)'} · <a href="#/transactions" style="color:var(--g)">see all</a></p></div><div class="box feed" id="hf">${feed(s,8)}</div>`}
 
 function standings(s){const l=[...s.teams].sort((a,b)=>b.w-a.w||b.pf-a.pf);
@@ -335,9 +331,9 @@ ${L('Playoffs',ul(['6 teams qualify, weeks 15 to 17','Top 2 seeds get a first-ro
 ${L('Operation schedule','<p>See the month by month calendar banner at the top of the <a href="#/" style="color:var(--g)">Home</a> page.</p>')}
 ${L('League philosophy and commissioners','<p>Active trading, strategic asset management, long-term dynasty strategy. The Grid rewards active participants who adapt, stay active, and think ahead.</p><p class="note">Co-commissioned by Ryanhill3123 and Cplant1. Commissioners have final say in all disputes.</p>')}`}
 
-let ST=[],SI=0,STM=null,ST_NAME={};
+let ST=[],SI=0,STM=null,ST_NAME={},TICK=[];
 const NCSS=`<style>
-.nw{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:10px;margin:14px 0}
+.nw{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:10px;margin:14px 0;align-items:start}
 .nw .main{border:2px solid #d9e6dc;background:#05100a}
 .nw .hd{display:flex;align-items:center;gap:10px;padding:8px 12px;background:linear-gradient(#34413a,#0d1511);border-bottom:2px solid #d9e6dc}
 .nw .hd b{font:700 18px 'Rajdhani','Fira Code',sans-serif;color:#fff;letter-spacing:1px}
@@ -406,6 +402,22 @@ const NCSS=`<style>
 .nw .main{animation:none}.nw .fade{animation:nf .35s}@keyframes nf{from{opacity:.2}to{opacity:1}}
 @media(max-width:760px){.nw{grid-template-columns:1fr}.nw .side{flex-direction:row;overflow-x:auto}.nw .it{min-width:210px;border-bottom:0;border-right:1px solid #2a3a30}.nw .img .fg{right:6%}}
 </style>`;
+function buildTicker(s,W){const T=[],F=r=>team(s,r).user;
+ let hi=null;Object.entries(W).forEach(([rid,w])=>{w.pts.forEach((p,i)=>{if(!hi||p>hi.p)hi={p,u:F(rid),w:i+1}})});
+ if(hi)T.push(`Season high: <b>${hi.u}</b> dropped <b>${hi.p.toFixed(1)}</b> pts in Week ${hi.w}, the best score of the season`);
+ let lo=null,bl=null;
+ for(let w=1;w<s.week;w++){const m=s.wk&&s.wk[w];if(!m)continue;const g={};m.forEach(x=>{(g[x.matchup_id]=g[x.matchup_id]||[]).push(x)});
+  Object.values(g).forEach(p=>{if(p.length!=2)return;const[a,b]=p,d=Math.abs(a.points-b.points);
+   if(!lo||d<lo.d)lo={d,u:F(a.roster_id),v:F(b.roster_id),w};
+   if(!bl||d>bl.d)bl={d,u:a.points>b.points?F(a.roster_id):F(b.roster_id),v:a.points>b.points?F(b.roster_id):F(a.roster_id),w}})}
+ if(bl&&bl.d>0)T.push(`Biggest blowout: <b>${bl.u}</b> beat ${bl.v} by <b>${bl.d.toFixed(1)}</b> pts in Week ${bl.w}`);
+ if(lo&&lo.u!=lo.v)T.push(`Closest finish: ${lo.u} vs ${lo.v} were separated by <b>${lo.d.toFixed(2)}</b> pts in Week ${lo.w}`);
+ let tot=0,cnt=0;Object.values(W).forEach(w=>w.pts.forEach(p=>{tot+=p;cnt++}));
+ if(cnt)T.push(`League average: <b>${(tot/cnt).toFixed(1)}</b> pts per team per week`);
+ let ls=null;Object.entries(W).forEach(([rid,w])=>{let n=0,c=0;w.res.forEach(r=>{if(r=='W'){c++;if(c>n)n=c}else c=0});if(!ls||n>ls.n)ls={n,u:F(rid)}});
+ if(ls&&ls.n>=3)T.push(`Longest win streak: <b>${ls.u}</b> won ${ls.n} straight`);
+ const tr=s.tx.filter(x=>x.type=='trade').length;if(tr)T.push(`<b>${tr}</b> trades made league-wide this season`);
+ return T}
 function buildStories(s,W,A,o,x){const wk=s.week,st=x.started;const F=n=>team(s,n);
  const l=o[0],bot=o[o.length-1],hot=A.list[1][4],king=A.list[2][4],pts=A.list[0][4],unl=A.list[3][4];
  const L=[];ST_NAME={};s.teams.forEach(q=>ST_NAME[q.av]=q.user);
@@ -459,7 +471,7 @@ function newsHTML(){const sd=ST[SI],n=ST.length;
 ${art(sd)}
 <div class="hl"><h2>${sd.h}</h2></div><div class="bd fade">${sd.b}</div></div>
 <div class="side">${ST.map((t,i)=>`<div class="it ${i==SI?'on':''}" data-i="${i}"><i class="th" style="background:${TH[t.t][0]};border-color:${TH[t.t][1]}"><svg viewBox="0 0 200 200" fill="none" stroke="${TH[t.t][1]}" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">${ICON[t.t]}</svg></i><div><b>${t.k}</b><span>${t.h}</span></div></div>`).join('')}</div>
-<div class="tk"><div>${ST.map(t=>`<em>▶</em>${t.h}: ${t.b}`).join('')}</div></div>`}
+<div class="tk"><div>${(TICK.length?TICK:ST.map(t=>t.h+': '+t.b)).map(x=>`<em>▶</em>${x}`).join('')}</div></div>`}
 function newsSet(i){SI=(i+ST.length)%ST.length;const el=$('nw');if(el){el.innerHTML=newsHTML();bindNews()}}
 function bindNews(){const el=$('nw');el.querySelectorAll('.it').forEach(e=>e.onclick=()=>{newsSet(+e.dataset.i);clearInterval(STM);STM=setInterval(()=>newsSet(SI+1),9000)});const on=el.querySelector('.it.on');if(on&&el.querySelector('.side').scrollWidth>el.querySelector('.side').clientWidth)on.parentNode.scrollLeft=on.offsetLeft-10}
 function newsInit(){clearInterval(STM);SI=0;const el=$('nw');if(!el)return;el.innerHTML=newsHTML();bindNews();STM=setInterval(()=>{if(!$('nw')||!$('p-home').classList.contains('on'))return;newsSet(SI+1)},9000)}
