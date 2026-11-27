@@ -317,7 +317,7 @@ function muNav(w,rid){const s=MS;if(!s||w<1||w>17)return;const cur=(s.wk&&s.wk[w
 async function muOpen(w,mid,lrid){const s=MS;if(!s)return;const cur=(s.wk&&s.wk[w])||[];const g={};cur.forEach(x=>{(g[x.matchup_id]=g[x.matchup_id]||[]).push(x)});const pr=g[mid];if(!pr||pr.length!=2)return;if(lrid&&pr[1].roster_id==lrid)pr.reverse();
  const ids=[...new Set(pr.flatMap(x=>[...(x.starters||[]),...(x.players||[])]))];
  const need=ids.filter(i=>!PL[i]);
- if(need.length&&!PLD){PLD=true;try{const P=await get('players/nfl');need.forEach(i=>{const q=P[i];PL[i]=q?{n:q.full_name||i,pos:q.position||'',tm:q.team||''}:{n:i,pos:'',tm:''};NAMES[i]=NAMES[i]||PL[i].n})}catch(e){PLD=false}}
+ if(need.length&&!PLD){PLD=true;try{const P=await get('players/nfl');for(const i in P){const q=P[i];PL[i]={n:q.full_name||i,pos:q.position||'',tm:q.team||''}}need.forEach(i=>{if(!PL[i])PL[i]={n:NAMES[i]||i,pos:'',tm:''};NAMES[i]=NAMES[i]||PL[i].n})}catch(e){PLD=false}}
  const [a,b]=pr,ta=team(s,a.roster_id),tb=team(s,b.roster_id);
  const rec=r=>{const t=s.teams.find(q=>q.rid==r);return t?t.w+'-'+t.l+(t.t?'-'+t.t:''):''};
  const slots=(s.pos&&s.pos.length?s.pos:DEFPOS).map(x=>String(x).replace('SUPER_FLEX','SFX').replace('REC_FLEX','RFX'));
