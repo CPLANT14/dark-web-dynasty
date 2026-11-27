@@ -310,9 +310,9 @@ function vuseAll(){const u={};if(VREMOTE)for(const i in VREMOTE){const r=VREMOTE
 function vused(i){return vuseAll()[i]}
 const VSTATS={};
 async function vEnsureStats(){const u=vuseAll();const ws={};for(const i in u){if(+i===1&&/\|p\d+/.test(String(u[i].note||'')))ws[+u[i].week]=1}
- await Promise.all(Object.keys(ws).map(async w=>{if(VSTATS[w])return;try{VSTATS[w]=await get('stats/nfl/regular/'+((MS&&MS.season)||'2026')+'/'+w)}catch(e){}}))}
-function vTdPts(pid,w){const st=VSTATS[w]&&VSTATS[w][pid];if(!st)return 0;const sc=(MS&&MS.scoring)||{};return (st.pass_td||0)*(sc.pass_td||0)+(st.rush_td||0)*(sc.rush_td||0)+(st.rec_td||0)*(sc.rec_td||0)}
-function vbonus(rid,w){const u=vuseAll();let p=0;for(const i in u){const e=u[i];if(!e)continue;const nt=String(e.note||'');const rm=/r(\d+)/.exec(nt);const pm=/\|p(\d+)/.exec(nt);let ur=rm?+rm[1]:(e.rid!=null?e.rid:null);if(ur==null&&MS){const o=(MS.rpl||[]).find(r=>r.players.includes(CASS[i][0]));ur=o?o.rid:null}if(ur==null||ur!=rid||+e.week!==+w)continue;
+ await Promise.all(Object.keys(ws).map(async w=>{if(VSTATS[w])return;try{VSTATS[w]=await get('stats/nfl/regular/'+((S&&S.season)||'2026')+'/'+w)}catch(e){}}))}
+function vTdPts(pid,w){const st=VSTATS[w]&&VSTATS[w][pid];if(!st)return 0;const sc=(S&&S.scoring)||{};return (st.pass_td||0)*(sc.pass_td||0)+(st.rush_td||0)*(sc.rush_td||0)+(st.rec_td||0)*(sc.rec_td||0)}
+function vbonus(rid,w){const u=vuseAll();let p=0;for(const i in u){const e=u[i];if(!e)continue;const nt=String(e.note||'');const rm=/r(\d+)/.exec(nt);const pm=/\|p(\d+)/.exec(nt);let ur=rm?+rm[1]:(e.rid!=null?e.rid:null);if(ur==null&&S){const o=(S.rpl||[]).find(r=>r.players.includes(CASS[i][0]));ur=o?o.rid:null}if(ur==null||ur!=rid||+e.week!==+w)continue;
  if(+i===0)p+=10;else if(+i===1&&pm)p+=vTdPts(pm[1],w)}return p}
 function vPost(asset,action,week,note){const k=vkey();if(!k)return;try{const fd=new FormData();fd.append('key',k);fd.append('asset',asset);fd.append('action',action);fd.append('week',String(week));fd.append('note',String(note||''));fetch(VAPPS,{method:'POST',mode:'no-cors',body:fd}).then(()=>{setTimeout(()=>{vLoadRemote().then(()=>vEnsureStats()).then(cPaint)},20000)},()=>{})}catch(e){}}
 function vapply(s,pr,w){return pr.map(x=>{const p=vbonus(x.roster_id,w);return p?Object.assign({},x,{points:x.points+p,vtag:p}):x})}
