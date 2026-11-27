@@ -17,7 +17,7 @@ a{color:inherit;text-decoration:none}
 .nav a:hover,.dd>button:hover{color:var(--g);border-color:var(--deep)}
 .nav a.on,.dd.on>button{color:#000;background:var(--g)}
 .dd{position:relative}.dd .m{display:none;position:absolute;right:0;top:100%;background:var(--plate);border:1px solid var(--deep);min-width:260px;max-width:100vw;z-index:30}
-.dd:hover .m,.dd:focus-within .m{display:block}.dd .m a{padding:11px 14px;color:var(--w);border-bottom:1px solid var(--deep)}.dd .m a small{display:block;color:var(--dim);font-size:11px}.dd .m a:hover{background:var(--deep);color:var(--g)}.dd .m a.on{background:var(--deep);color:var(--g)}.dd .m a.on small{color:#2f9a4d}
+.dd:hover .m,.dd:focus-within .m,.dd.open .m{display:block}.dd .m a{padding:11px 14px;color:var(--w);border-bottom:1px solid var(--deep)}.dd .m a small{display:block;color:var(--dim);font-size:11px}.dd .m a:hover{background:var(--deep);color:var(--g)}.dd .m a.on{background:var(--deep);color:var(--g)}.dd .m a.on small{color:#2f9a4d}
 main{max-width:1200px;margin:auto;padding:30px 20px 80px}
 .hero{text-align:center;padding:34px 0 10px}
 .hero h1{font-size:clamp(34px,7vw,70px);color:var(--g);letter-spacing:2px;text-shadow:0 0 24px rgba(2,255,66,.35)}
@@ -60,10 +60,10 @@ footer{text-align:center;color:var(--dim);font-size:11px;letter-spacing:2px;padd
 .who img{width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:6px}</style></head><body>
 <div class="top"><div class="bar"><a class="logo" href="#/"><img class="llg" src="https://sleepercdn.com/avatars/1a9bb25b22fd9e75c56c4f36082be6d5" alt="" onerror="this.style.display='none'"><span class="lt">DARKWEB://DYNASTY<small>LEAGUE HUB</small></span></a>
 <nav class="nav"><a href="#/" data-p="home">Home</a><a href="#/matchups" data-p="matchups">Matchups</a>
-<div class="dd" id="ops"><button onclick="location.hash='#/operations'">Operations ▾</button><div class="m"><a href="#/cyber-monday" data-p="cyber-monday">Cyber Monday Market<small>Black Friday asset bids</small></a><a href="#/market-surge" data-p="market-surge">Market Surge<small>Trade raffle</small></a><a href="#/league-projections" data-p="league-projections">League Projections<small>Playoff picks game</small></a><a href="#/grid-projections" data-p="grid-projections">Grid Projections<small>Predict the final standings</small></a></div></div>
+<div class="dd" id="ops"><button onclick="event.stopPropagation();document.getElementById('ops').classList.toggle('open')">Operations ▾</button><div class="m"><a href="#/cyber-monday" data-p="cyber-monday">Cyber Monday Market<small>Black Friday asset bids</small></a><a href="#/market-surge" data-p="market-surge">Market Surge<small>Trade raffle</small></a><a href="#/league-projections" data-p="league-projections">League Projections<small>Playoff picks game</small></a><a href="#/grid-projections" data-p="grid-projections">Grid Projections<small>Predict the final standings</small></a></div></div>
 <a href="#/auction" data-p="auction">Auction</a><a href="#/rules" data-p="rules">Bylaws</a><a href="https://www.leaguesafe.com/" target="_blank" rel="noopener" style="color:var(--amber)">LeagueSafe ↗</a></nav></div></div>
 <main>
-<div class="page" id="p-home"></div><div class="page" id="p-matchups"></div><div class="page" id="p-standings"></div><div class="page" id="p-market-surge"></div><div class="page" id="p-league-projections"></div><div class="page" id="p-grid-projections"></div><div class="page" id="p-cyber-monday"></div><div class="page" id="p-operations"></div><div class="page" id="p-calendar"></div><div class="page" id="p-auction"></div><div class="page" id="p-rules"></div>
+<div class="page" id="p-home"></div><div class="page" id="p-matchups"></div><div class="page" id="p-standings"></div><div class="page" id="p-market-surge"></div><div class="page" id="p-league-projections"></div><div class="page" id="p-grid-projections"></div><div class="page" id="p-cyber-monday"></div><div class="page" id="p-calendar"></div><div class="page" id="p-auction"></div><div class="page" id="p-rules"></div>
 </main>
 <footer>THE GRID // DARK WEB DYNASTY 1 // LIVE DATA FROM SLEEPER</footer>
 <script>
@@ -272,11 +272,6 @@ ${LPR.sb&&LPR.sb.done?`<div class="champ"><div><div class="sub" style="font-size
 <div class="lpp" id="lp-c" style="display:none"><h2 class="oh">LEAGUE PICKS</h2><div class="msg">&gt; HOW THE LEAGUE PICKED. EACH BAR IS HOW MANY OF THE ${ent.length} ENTRIES CHOSE THAT TEAM.</div>${bars('Super Bowl champion',[6])}${bars('Super Bowl participants',[4,5])}${bars('Conference championship teams',[0,1,2,3])}</div>
 <div class="lpp" id="lp-e" style="display:none"><h2 class="oh">SCORING</h2><div class="msg" style="line-height:1.9">&gt; 1 pt per correct conference championship participant<br>&gt; 3 pts per correct conference championship matchup<br>&gt; 3 pts per correct Super Bowl participant<br>&gt; 8 pts correct Super Bowl matchup<br>&gt; 16 pts correct Super Bowl winner<br>&gt; Tiebreaker: closest to the combined Super Bowl points total<br>&gt; Most picked champion: ${Object.entries(ch).sort((a,b)=>b[1]-a[1])[0].join(' (')} of ${ent.length})</div>
 <div class="champ" style="display:block"><div class="nm2">15 GRIDCOIN™</div><p class="sub" style="margin-top:8px">Awarded to the highest-scoring operator at the conclusion of Super Bowl LXI. In the event of a tie, the operator whose projected combined Super Bowl points total is closest to the actual total wins.</p><p class="sub" style="margin-top:8px">ENTRY: members of the dynasty league.</p></div></div></div>`}
-function opsIndex(){return `${OPSCSS}<div class="ops">${hd('/OPERATIONS','OPERATIONS','// Side games running inside The Grid. Pick a module.')}<div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
-<a class="card" href="#/market-surge"><small>MODULE 01 // RAFFLE</small><h3>MARKET SURGE</h3><p>One entry per trade in the window. Weighted draw for the Cyber Monday budget.</p></a>
-<a class="card" href="#/league-projections"><small>MODULE 02 // LOCKED</small><h3>LEAGUE PROJECTIONS</h3><p>NFL playoff prediction game. 15 Gridcoin to the top score.</p></a>
-<a class="card" href="#/grid-projections"><small>MODULE 03 // LIVE</small><h3>GRID PROJECTIONS</h3><p>Predict the final dynasty standings. Scored from live standings, 15 Gridcoin to the top score.</p></a>
-<a class="card" href="#/cyber-monday"><small>MODULE 04 // LIVE</small><h3>CYBER MONDAY MARKET</h3><p>Bid Market budget on 5 injected assets across Black Friday weekend. Waivers run on Cyber Monday.</p></a></div></div>`}
 function gp(s){const G=gpData(s),N=G.rows.length;
  const ord=[...G.rows].sort((a,b)=>b.with_bonus-a.with_bonus||a.total_err-b.total_err);
  const cnt=v=>G.rows.filter(m=>m.with_bonus==v).length,rk=m=>1+G.rows.filter(x=>x.with_bonus>m.with_bonus).length;
@@ -349,6 +344,7 @@ function vlb(e,src){e.preventDefault();let d=document.getElementById('vlb');if(!
 function vclose(){const d=document.getElementById('vlb');if(d)d.classList.remove('on');document.body.style.overflow=''}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){vclose();vclose2()}});
 document.addEventListener('click',e=>{const l=document.getElementById('cu-p1l');if(l&&!(e.target.closest&&e.target.closest('#cu-p1w')))l.style.display='none'});
+document.addEventListener('click',e=>{const o=document.getElementById('ops');if(!o||!o.classList.contains('open'))return;if(e.target.closest&&e.target.closest('#ops .m a'))o.classList.remove('open');else if(!(e.target.closest&&e.target.closest('#ops')))o.classList.remove('open')});
 const opsDD=document.getElementById('ops');
 function ddFix(){const m=opsDD.querySelector('.m');m.style.left='';m.style.right='';m.style.display='block';const r=m.getBoundingClientRect();m.style.display='';if(r.left<4){m.style.right='auto';m.style.left='4px'}}
 opsDD.addEventListener('mouseenter',ddFix);opsDD.addEventListener('focusin',ddFix);
@@ -590,7 +586,7 @@ function newsSet(i){SI=(i+ST.length)%ST.length;const el=$('nw');if(el){el.innerH
 function bindNews(){const el=$('nw');el.querySelectorAll('.it').forEach(e=>e.onclick=()=>{newsSet(+e.dataset.i);clearInterval(STM);STM=setInterval(()=>newsSet(SI+1),9000)});const on=el.querySelector('.it.on');if(on&&el.querySelector('.side').scrollWidth>el.querySelector('.side').clientWidth)on.parentNode.scrollLeft=on.offsetLeft-10;const m=el.querySelector('.main'),s=el.querySelector('.side');if(m&&s)s.style.maxHeight=matchMedia('(max-width:760px)').matches?'':m.offsetHeight+'px'}
 function newsInit(){clearInterval(STM);SI=0;const el=$('nw');if(!el)return;el.innerHTML=newsHTML();bindNews();STM=setInterval(()=>{if(!$('nw')||!$('p-home').classList.contains('on'))return;newsSet(SI+1)},9000)}
 
-const PAGES=['home','matchups','operations','standings','transactions','market-surge','league-projections','grid-projections','cyber-monday','calendar','auction','rules'];
+const PAGES=['home','matchups','standings','transactions','market-surge','league-projections','grid-projections','cyber-monday','calendar','auction','rules'];
 if(!$('p-transactions')){const d=document.createElement('div');d.className='page';d.id='p-transactions';$('p-home').parentNode.appendChild(d)}
 
 const CALCSS=`<style>
@@ -614,15 +610,14 @@ function calBanner(){const i=CAL.findIndex(c=>c[0]==MON());
  return `${CALCSS}<div class="cb" id="cb"><div class="strip">${CAL.map((c,k)=>`<button class="m ${k==i?'now sel':''}" data-k="${k}"><small>${String(k+1).padStart(2,'0')}${k==i?' · NOW':''}</small><b>${c[0].slice(0,3).toUpperCase()}</b><span>${c[1]}</span></button>`).join('')}</div><div class="det" id="cbd">${calDet(i<0?0:i)}</div></div>`}
 function calBind(){const cb=$('cb');if(!cb)return;cb.querySelectorAll('.m').forEach(b=>b.onclick=()=>{cb.querySelectorAll('.m').forEach(x=>x.classList.toggle('sel',x==b));$('cbd').innerHTML=calDet(+b.dataset.k)});const n=cb.querySelector('.m.now'),st=cb.querySelector('.strip');if(n&&st.scrollWidth>st.clientWidth)st.scrollLeft=n.offsetLeft-12}
 const done={};
-async function route0(){if(/^#\/(standings|calendar)$/.test(location.hash))history.replaceState(null,'','#/');const p=(location.hash.replace('#/','')||'home');const pg=PAGES.includes(p)?p:'home';
+async function route0(){if(/^#\/(standings|calendar|operations)$/.test(location.hash))history.replaceState(null,'','#/');const p=(location.hash.replace('#/','')||'home');const pg=PAGES.includes(p)?p:'home';
  document.querySelectorAll('.page').forEach(e=>e.classList.toggle('on',e.id=='p-'+pg));
  document.querySelectorAll('.nav a[data-p]').forEach(a=>a.classList.toggle('on',a.dataset.p==pg||(pg=='transactions'&&a.dataset.p=='home')));
- $('ops').classList.toggle('on',['operations','market-surge','league-projections','grid-projections','cyber-monday'].includes(pg));
+ $('ops').classList.toggle('on',['market-surge','league-projections','grid-projections','cyber-monday'].includes(pg));
  window.scrollTo(0,0);if(done[pg])return;done[pg]=1;const el=$('p-'+pg);el.innerHTML='<div class="empty">LOADING…</div>';
  if(pg=='league-projections'){el.innerHTML=lp();lpLive();return}
  if(pg=='grid-projections'){const s=await load();el.innerHTML=gp(s);return}
  if(pg=='cyber-monday'){const s=await load();el.innerHTML=cyberPg(s);vLoadRemote().then(()=>{if(location.hash.indexOf('cyber-monday')>=0){const e2=document.getElementById('p-cyber-monday');if(e2)e2.innerHTML=cyberPg(s)}});return}
- if(pg=='operations'){el.innerHTML=opsIndex();return}
  if(pg=='matchups'){const s=await load();el.innerHTML=matchPg(s);return}
  if(pg=='calendar'){el.innerHTML=calendar();return}
  if(pg=='rules'){el.innerHTML=rules();return}
@@ -652,6 +647,6 @@ const OPS2=`<style>
 .ops2 .box>table,.ops2 table{border-color:#14502a}
 </style>`;
 const CRUMBS={home:'/HOME',matchups:'/LEAGUE/MATCHUPS',standings:'/LEAGUE/STANDINGS',transactions:'/LEAGUE/TRANSACTIONS',calendar:'/LEAGUE/CALENDAR',auction:'/LEAGUE/AUCTION',rules:'/LEAGUE/BYLAWS'};
-async function route(){await route0();if(/^#\/(standings|calendar)$/.test(location.hash))history.replaceState(null,'','#/');const p=(location.hash.replace('#/','')||'home'),pg=PAGES.includes(p)?p:'home';
+async function route(){await route0();if(/^#\/(standings|calendar|operations)$/.test(location.hash))history.replaceState(null,'','#/');const p=(location.hash.replace('#/','')||'home'),pg=PAGES.includes(p)?p:'home';
  if(CRUMBS[pg]){const el=$('p-'+pg);if(el&&!el.classList.contains('ops2')){el.classList.add('ops','ops2');el.insertAdjacentHTML('afterbegin',OPSCSS+OPS2+CIRC+'<div class="crumb">&gt; '+CRUMBS[pg]+'</div>')}}}
 </script></body></html>
