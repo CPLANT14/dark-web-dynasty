@@ -17,7 +17,7 @@ a{color:inherit;text-decoration:none}
 .nav a:hover,.dd>button:hover{color:var(--g);border-color:var(--deep)}
 .nav a.on,.dd.on>button{color:#000;background:var(--g)}
 .dd{position:relative}.dd .m{display:none;position:absolute;right:0;top:100%;background:var(--plate);border:1px solid var(--deep);min-width:260px;z-index:30}
-.dd:hover .m,.dd:focus-within .m{display:block}.dd .m a{padding:11px 14px;color:var(--w);border-bottom:1px solid var(--deep)}.dd .m a small{display:block;color:var(--dim);font-size:11px}.dd .m a:hover{background:var(--deep);color:var(--g)}
+.dd:hover .m,.dd:focus-within .m{display:block}.dd .m a{padding:11px 14px;color:var(--w);border-bottom:1px solid var(--deep)}.dd .m a small{display:block;color:var(--dim);font-size:11px}.dd .m a:hover{background:var(--deep);color:var(--g)}.dd .m a.on{background:var(--deep);color:var(--g)}.dd .m a.on small{color:#2f9a4d}
 main{max-width:1200px;margin:auto;padding:30px 20px 80px}
 .hero{text-align:center;padding:34px 0 10px}
 .hero h1{font-size:clamp(34px,7vw,70px);color:var(--g);letter-spacing:2px;text-shadow:0 0 24px rgba(2,255,66,.35)}
@@ -52,6 +52,7 @@ button.b{color:#000;background:var(--g);border:0;cursor:pointer;font-weight:600;
 .vouchers{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}.vouchers a{border:1px solid var(--deep);display:block}.vouchers a:hover{border-color:var(--g)}.vouchers img{width:100%;display:block}
 .vtag{display:flex;align-items:stretch;border-top:1px solid var(--deep);text-align:left}
 .vouchers img.vhs{width:72px;height:72px;display:block;border-radius:0;border:0;border-right:1px solid var(--deep);margin:0;object-fit:cover;object-position:top}.vmeta{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1px;padding:6px 9px}.vmeta b{color:var(--w);font-size:12px;letter-spacing:.5px}.vmeta span{color:var(--g);font-size:10px;letter-spacing:1px}.vmeta i{color:var(--dim);font-style:normal;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}.vwin{display:flex;align-items:center;gap:5px;padding:5px 8px;font-size:10px;letter-spacing:.5px;border-top:1px solid var(--deep);color:var(--amber)}.vwin img{width:16px;height:16px;border-radius:50%;vertical-align:middle}
+.vlb{display:none;position:fixed;inset:0;z-index:99;background:rgba(2,6,3,.94);align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:20px;cursor:zoom-out}.vlb.on{display:flex}.vlb img{max-width:92vw;max-height:78vh;object-fit:contain;border:1px solid var(--g);box-shadow:0 0 30px rgba(57,255,106,.25)}.vback{background:transparent;color:var(--g);border:1px solid var(--g);padding:10px 22px;font:700 12px 'Fira Code';letter-spacing:2px;cursor:pointer}.vback:hover{background:var(--g);color:#000}
 .note{color:var(--dim);font-size:12px;margin:8px 0}.empty{color:var(--dim);padding:20px;text-align:center}
 footer{text-align:center;color:var(--dim);font-size:11px;letter-spacing:2px;padding:40px 20px}
 .page{display:none}.page.on{display:block}
@@ -282,10 +283,13 @@ ${G.live?`<div style="border:1px solid #ffb02e;color:#ffb02e;padding:8px 10px;fo
 const ARCH=`<div class="sec"><h2>Archive</h2><p>Past events and lost files</p></div><div class="empty">Nothing filed yet.</div>`;
 const CASS=[['11192','dwd1-voucher-01.png','Asset 01 - 10 Point Voucher','Malik Flowers','WR'],['11197','dwd1-voucher-02.png','Asset 02 - Single Player Double TD Bonus','Joel Honigford','TE'],['11204','dwd1-voucher-03.png','Asset 03 - 15 Gridcoin','Duece Watts','WR'],['11209','dwd1-voucher-04.png','Asset 04 - +10 Cyber Market Budget','Henry Pearson','RB'],['11210','dwd1-voucher-05.png','Asset 05 - Mute Button','Malik Heath','WR']];
 function cyberPg(s){const card=c=>{const[pid,png,alt,name,pos]=c;const o=(s.rpl||[]).find(r=>r.players.includes(pid));const t=o?team(s,o.rid):null;
- return `<a href="${png}"><img src="${png}" alt="${alt}"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/${pid}.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>${name}</b><span>${pos}</span><i>(Placeholder)</i></span></span><span class="vwin">${t?`WINNER: <img src="${av(t.av)}" onerror="this.style.display='none'"> ${t.user}`:(s.live?'OPEN — waivers run Cyber Monday':'OFFLINE — winner tracking unavailable')}</span></a>`};
+ return `<a href="${png}" onclick="return vlb(event,'${png}')"><img src="${png}" alt="${alt}"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/${pid}.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>${name}</b><span>${pos}</span><i>(Placeholder)</i></span></span><span class="vwin">${t?`WINNER: <img src="${av(t.av)}" onerror="this.style.display='none'"> ${t.user}`:(s.live?'OPEN — waivers run Cyber Monday':'OFFLINE — winner tracking unavailable')}</span></a>`};
  return OPSCSS+`<div class="ops">${CIRC}<div class="crumb">&gt; OPERATIONS // CYBER_MONDAY_MARKET.EXE</div></div>
 <div class="sec"><h2>Cyber Monday Market</h2><p>DWD1: The Grid // asset injection</p></div>
 <div class="box"><h3 class="rus" style="color:var(--g);margin-bottom:6px">DWD1: THE GRID — CYBER MONDAY MARKET</h3><p class="note">Five invaluable assets injected into the Grid. Bids run across Black Friday weekend; the Market refreshes on Cyber Monday. Each asset is listed on Sleeper as the placeholder player tagged on its card. Winner tags update automatically once waivers run. Click any voucher for full size.</p><div class="vouchers">${CASS.map(card).join('')}</div></div>`}
+function vlb(e,src){e.preventDefault();let d=document.getElementById('vlb');if(!d){d=document.createElement('div');d.id='vlb';d.className='vlb';d.onclick=vclose;document.body.appendChild(d)}d.innerHTML='<img src="'+src+'" alt="voucher full size"><button class="vback" type="button">&lt; BACK</button>';d.classList.add('on');document.body.style.overflow='hidden';return false}
+function vclose(){const d=document.getElementById('vlb');if(d)d.classList.remove('on');document.body.style.overflow=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')vclose()});
 const LS='https://www.leaguesafe.com/';
 const CAL=[
 ['January','System Lock','Rosters lock and trading is disabled until yearly investments (buy-ins) are paid.'],
