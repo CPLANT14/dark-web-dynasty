@@ -16,7 +16,7 @@ a{color:inherit;text-decoration:none}
 .nav a,.dd>button{background:none;border:1px solid transparent;color:var(--dim);font:13px 'Fira Code';letter-spacing:1px;padding:8px 12px;cursor:pointer;display:block}
 .nav a:hover,.dd>button:hover{color:var(--g);border-color:var(--deep)}
 .nav a.on,.dd.on>button{color:#000;background:var(--g)}
-.dd{position:relative}.dd .m{display:none;position:absolute;right:0;top:100%;background:var(--plate);border:1px solid var(--deep);min-width:260px;z-index:30}
+.dd{position:static}.dd .m{display:none;position:absolute;right:0;top:100%;background:var(--plate);border:1px solid var(--deep);min-width:260px;max-width:100vw;z-index:30}
 .dd:hover .m,.dd:focus-within .m{display:block}.dd .m a{padding:11px 14px;color:var(--w);border-bottom:1px solid var(--deep)}.dd .m a small{display:block;color:var(--dim);font-size:11px}.dd .m a:hover{background:var(--deep);color:var(--g)}.dd .m a.on{background:var(--deep);color:var(--g)}.dd .m a.on small{color:#2f9a4d}
 main{max-width:1200px;margin:auto;padding:30px 20px 80px}
 .hero{text-align:center;padding:34px 0 10px}
@@ -56,14 +56,14 @@ button.b{color:#000;background:var(--g);border:0;cursor:pointer;font-weight:600;
 .note{color:var(--dim);font-size:12px;margin:8px 0}.empty{color:var(--dim);padding:20px;text-align:center}
 footer{text-align:center;color:var(--dim);font-size:11px;letter-spacing:2px;padding:40px 20px}
 .page{display:none}.page.on{display:block}
-@media(max-width:640px){.bar{gap:8px}.logo{width:100%}.nav a,.dd>button{padding:7px 9px;font-size:12px}.dd .m{right:auto;left:0}}
+@media(max-width:640px){.bar{gap:8px}.logo{width:100%}.nav a,.dd>button{padding:7px 9px;font-size:12px}}
 .who img{width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:6px}</style></head><body>
 <div class="top"><div class="bar"><a class="logo" href="#/"><img class="llg" src="https://sleepercdn.com/avatars/1a9bb25b22fd9e75c56c4f36082be6d5" alt="" onerror="this.style.display='none'"><span class="lt">DARKWEB://DYNASTY<small>LEAGUE HUB</small></span></a>
 <nav class="nav"><a href="#/" data-p="home">Home</a>
 <div class="dd" id="ops"><button onclick="location.hash='#/operations'">Operations ▾</button><div class="m"><a href="#/cyber-monday" data-p="cyber-monday">Cyber Monday Market<small>Black Friday asset bids</small></a><a href="#/market-surge" data-p="market-surge">Market Surge<small>Trade raffle</small></a><a href="#/league-projections" data-p="league-projections">League Projections<small>Playoff picks game</small></a><a href="#/grid-projections" data-p="grid-projections">Grid Projections<small>Predict the final standings</small></a></div></div>
-<a href="#/auction" data-p="auction">Auction</a><a href="#/rules" data-p="rules">Bylaws</a><a href="#/archive" data-p="archive">Archive</a><a href="https://www.leaguesafe.com/" target="_blank" rel="noopener" style="color:var(--amber)">LeagueSafe ↗</a></nav></div></div>
+<a href="#/auction" data-p="auction">Auction</a><a href="#/rules" data-p="rules">Bylaws</a><a href="https://www.leaguesafe.com/" target="_blank" rel="noopener" style="color:var(--amber)">LeagueSafe ↗</a></nav></div></div>
 <main>
-<div class="page" id="p-home"></div><div class="page" id="p-standings"></div><div class="page" id="p-market-surge"></div><div class="page" id="p-league-projections"></div><div class="page" id="p-grid-projections"></div><div class="page" id="p-cyber-monday"></div><div class="page" id="p-operations"></div><div class="page" id="p-calendar"></div><div class="page" id="p-auction"></div><div class="page" id="p-rules"></div><div class="page" id="p-archive"></div>
+<div class="page" id="p-home"></div><div class="page" id="p-standings"></div><div class="page" id="p-market-surge"></div><div class="page" id="p-league-projections"></div><div class="page" id="p-grid-projections"></div><div class="page" id="p-cyber-monday"></div><div class="page" id="p-operations"></div><div class="page" id="p-calendar"></div><div class="page" id="p-auction"></div><div class="page" id="p-rules"></div>
 </main>
 <footer>THE GRID // DARK WEB DYNASTY 1 // LIVE DATA FROM SLEEPER</footer>
 <script>
@@ -280,7 +280,6 @@ ${G.live?`<div style="border:1px solid #ffb02e;color:#ffb02e;padding:8px 10px;fo
 <div class="wrap"><table class="hm"><thead><tr><th style="text-align:left">Manager:</th>${G.results.map((t,i)=>`<th><img src="${A(t)}" style="width:20px;height:20px;object-fit:cover;display:block;margin:0 auto 2px" onerror="this.style.visibility='hidden'"><span style="font-size:9px;font-weight:400">${t}</span><br>${i+1}</th>`).join('')}</tr></thead><tbody>${G.rows.map(m=>`<tr><td class="nm">${m.name}</td>${m.err.map(e=>`<td style="background:${hc(e)}">${e}</td>`).join('')}</tr>`).join('')}<tr><td class="nm" style="border:1px solid #fff">LEAGUE AVG ERROR</td>${G.avg.map(v=>`<td style="background:#1f2433;color:#fff;border:1px solid #fff">${v.toFixed(1)}</td>`).join('')}</tr></tbody></table></div>
 <div style="font-size:11px;color:var(--dim);line-height:1.7">Scoring: lose one point for each rank you were off, for every manager (max 72). Prize: 15 Gridcoin to the top score. Picks come from the league projections sheet (snapshot).</div></div>`}
 
-const ARCH=`<div class="sec"><h2>Archive</h2><p>Past events and lost files</p></div><div class="empty">Nothing filed yet.</div>`;
 const CASS=[['11192','dwd1-voucher-01.png','Asset 01 - 10 Point Voucher','Malik Flowers','WR'],['11197','dwd1-voucher-02.png','Asset 02 - Single Player Double TD Bonus','Joel Honigford','TE'],['11204','dwd1-voucher-03.png','Asset 03 - 15 Gridcoin','Duece Watts','WR'],['11209','dwd1-voucher-04.png','Asset 04 - +10 Cyber Market Budget','Henry Pearson','RB'],['11210','dwd1-voucher-05.png','Asset 05 - Mute Button','Malik Heath','WR']];
 function cyberPg(s){const card=c=>{const[pid,png,alt,name,pos]=c;const o=(s.rpl||[]).find(r=>r.players.includes(pid));const t=o?team(s,o.rid):null;
  return `<a href="${png}" onclick="return vlb(event,'${png}')"><img src="${png}" alt="${alt}"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/${pid}.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>${name}</b><span>${pos}</span><i>(Placeholder)</i></span></span><span class="vwin">${t?`WINNER: <img src="${av(t.av)}" onerror="this.style.display='none'"> ${t.user}`:(s.live?'OPEN — waivers run Cyber Monday':'OFFLINE — winner tracking unavailable')}</span></a>`};
@@ -304,7 +303,7 @@ const CAL=[
 ['October','Market Budget Reinitialization','Market budget (FAAB) refreshes for the Cyber Monday Market event.'],
 ['November','Cyber Monday Market','5 invaluable assets are injected. Bids run through Black Friday weekend. On Cyber Monday the Market refreshes (waivers run). Assets: 10 point voucher, single player double TD bonus, 15 Gridcoin in next year\'s rookie draft, +10 Cyber Market budget for next season, Mute Button.'],
 ['December','Endgame','Playoffs. Champion declared.']];
-const LINK={'July':'#/league-projections','August':'#/grid-projections','June':'#/market-surge','November':'#/archive','February':'#/auction','May':'#/auction','March':'#/rules'};
+const LINK={'July':'#/league-projections','August':'#/grid-projections','June':'#/market-surge','November':'#/cyber-monday','February':'#/auction','May':'#/auction','March':'#/rules'};
 const CH=[[138,124,112,100,91,76,69,62,56,50,45,41],[37,35,33,31,30,28,27,26,24,23,21,20],[19,17,16,15,14,13,12,11,10,9,8,7],[7,6,6,5,5,4,4,3,3,2,2,2]];
 function calendar(){const nm=new Date().toLocaleString('en-US',{month:'long',timeZone:'America/New_York'});const i=CAL.findIndex(c=>c[0]==nm),nx=CAL[(i+1)%12];
  return `<div class="sec"><h2>Year-round calendar</h2><p>What the bylaws schedule for each month</p></div>
@@ -492,7 +491,7 @@ function newsSet(i){SI=(i+ST.length)%ST.length;const el=$('nw');if(el){el.innerH
 function bindNews(){const el=$('nw');el.querySelectorAll('.it').forEach(e=>e.onclick=()=>{newsSet(+e.dataset.i);clearInterval(STM);STM=setInterval(()=>newsSet(SI+1),9000)});const on=el.querySelector('.it.on');if(on&&el.querySelector('.side').scrollWidth>el.querySelector('.side').clientWidth)on.parentNode.scrollLeft=on.offsetLeft-10;const m=el.querySelector('.main'),s=el.querySelector('.side');if(m&&s)s.style.maxHeight=matchMedia('(max-width:760px)').matches?'':m.offsetHeight+'px'}
 function newsInit(){clearInterval(STM);SI=0;const el=$('nw');if(!el)return;el.innerHTML=newsHTML();bindNews();STM=setInterval(()=>{if(!$('nw')||!$('p-home').classList.contains('on'))return;newsSet(SI+1)},9000)}
 
-const PAGES=['home','operations','standings','transactions','market-surge','league-projections','grid-projections','cyber-monday','calendar','auction','rules','archive'];
+const PAGES=['home','operations','standings','transactions','market-surge','league-projections','grid-projections','cyber-monday','calendar','auction','rules'];
 if(!$('p-transactions')){const d=document.createElement('div');d.className='page';d.id='p-transactions';$('p-home').parentNode.appendChild(d)}
 
 const CALCSS=`<style>
@@ -523,7 +522,6 @@ async function route0(){if(/^#\/(standings|calendar)$/.test(location.hash))histo
  window.scrollTo(0,0);if(done[pg])return;done[pg]=1;const el=$('p-'+pg);el.innerHTML='<div class="empty">LOADING…</div>';
  if(pg=='league-projections'){el.innerHTML=lp();lpLive();return}
  if(pg=='grid-projections'){const s=await load();el.innerHTML=gp(s);return}
- if(pg=='archive'){el.innerHTML=ARCH;return}
  if(pg=='cyber-monday'){const s=await load();el.innerHTML=cyberPg(s);return}
  if(pg=='operations'){el.innerHTML=opsIndex();return}
  if(pg=='calendar'){el.innerHTML=calendar();return}
@@ -553,7 +551,7 @@ const OPS2=`<style>
 .ops2 .tabs button.on{background:#39ff6a22;color:#39ff6a;border-color:#39ff6a;box-shadow:0 0 14px #02ff4233}
 .ops2 .box>table,.ops2 table{border-color:#14502a}
 </style>`;
-const CRUMBS={home:'/HOME',standings:'/LEAGUE/STANDINGS',transactions:'/LEAGUE/TRANSACTIONS',calendar:'/LEAGUE/CALENDAR',auction:'/LEAGUE/AUCTION',rules:'/LEAGUE/BYLAWS',archive:'/LEAGUE/ARCHIVE'};
+const CRUMBS={home:'/HOME',standings:'/LEAGUE/STANDINGS',transactions:'/LEAGUE/TRANSACTIONS',calendar:'/LEAGUE/CALENDAR',auction:'/LEAGUE/AUCTION',rules:'/LEAGUE/BYLAWS'};
 async function route(){await route0();if(/^#\/(standings|calendar)$/.test(location.hash))history.replaceState(null,'','#/');const p=(location.hash.replace('#/','')||'home'),pg=PAGES.includes(p)?p:'home';
  if(CRUMBS[pg]){const el=$('p-'+pg);if(el&&!el.classList.contains('ops2')){el.classList.add('ops','ops2');el.insertAdjacentHTML('afterbegin',OPSCSS+OPS2+CIRC+'<div class="crumb">&gt; '+CRUMBS[pg]+'</div>')}}}
 </script></body></html>
