@@ -51,7 +51,7 @@ button.b{color:#000;background:var(--g);border:0;cursor:pointer;font-weight:600;
 .tm{display:flex;align-items:center;gap:6px;background:#050805;border:1px solid var(--deep);padding:5px 8px}.tm img{width:22px;height:22px}.tm.win2{border-color:var(--amber);color:var(--amber);grid-column:1/-1;justify-content:center}
 .vouchers{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}.vouchers a{border:1px solid var(--deep);display:block}.vouchers a:hover{border-color:var(--g)}.vouchers img{width:100%;display:block}
 .vtag{display:flex;align-items:stretch;border-top:1px solid var(--deep);text-align:left}
-.vouchers img.vhs{width:72px;height:72px;display:block;border-radius:0;border:0;border-right:1px solid var(--deep);margin:0;object-fit:cover;object-position:top}.vmeta{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1px;padding:6px 9px}.vmeta b{color:var(--w);font-size:12px;letter-spacing:.5px}.vmeta span{color:var(--g);font-size:10px;letter-spacing:1px}.vmeta i{color:var(--dim);font-style:normal;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
+.vouchers img.vhs{width:72px;height:72px;display:block;border-radius:0;border:0;border-right:1px solid var(--deep);margin:0;object-fit:cover;object-position:top}.vmeta{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1px;padding:6px 9px}.vmeta b{color:var(--w);font-size:12px;letter-spacing:.5px}.vmeta span{color:var(--g);font-size:10px;letter-spacing:1px}.vmeta i{color:var(--dim);font-style:normal;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}.vwin{display:flex;align-items:center;gap:5px;padding:5px 8px;font-size:10px;letter-spacing:.5px;border-top:1px solid var(--deep);color:var(--amber)}.vwin img{width:16px;height:16px;border-radius:50%;vertical-align:middle}
 .note{color:var(--dim);font-size:12px;margin:8px 0}.empty{color:var(--dim);padding:20px;text-align:center}
 footer{text-align:center;color:var(--dim);font-size:11px;letter-spacing:2px;padding:40px 20px}
 .page{display:none}.page.on{display:block}
@@ -59,10 +59,10 @@ footer{text-align:center;color:var(--dim);font-size:11px;letter-spacing:2px;padd
 .who img{width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:6px}</style></head><body>
 <div class="top"><div class="bar"><a class="logo" href="#/"><img class="llg" src="https://sleepercdn.com/avatars/1a9bb25b22fd9e75c56c4f36082be6d5" alt="" onerror="this.style.display='none'"><span class="lt">DARKWEB://DYNASTY<small>LEAGUE HUB</small></span></a>
 <nav class="nav"><a href="#/" data-p="home">Home</a>
-<div class="dd" id="ops"><button onclick="location.hash='#/operations'">Operations ▾</button><div class="m"><a href="#/market-surge" data-p="market-surge">Market Surge<small>Trade raffle</small></a><a href="#/league-projections" data-p="league-projections">League Projections<small>Playoff picks game</small></a><a href="#/grid-projections" data-p="grid-projections">Grid Projections<small>Predict the final standings</small></a></div></div>
+<div class="dd" id="ops"><button onclick="location.hash='#/operations'">Operations ▾</button><div class="m"><a href="#/cyber-monday" data-p="cyber-monday">Cyber Monday Market<small>Black Friday asset bids</small></a><a href="#/market-surge" data-p="market-surge">Market Surge<small>Trade raffle</small></a><a href="#/league-projections" data-p="league-projections">League Projections<small>Playoff picks game</small></a><a href="#/grid-projections" data-p="grid-projections">Grid Projections<small>Predict the final standings</small></a></div></div>
 <a href="#/auction" data-p="auction">Auction</a><a href="#/rules" data-p="rules">Bylaws</a><a href="#/archive" data-p="archive">Archive</a><a href="https://www.leaguesafe.com/" target="_blank" rel="noopener" style="color:var(--amber)">LeagueSafe ↗</a></nav></div></div>
 <main>
-<div class="page" id="p-home"></div><div class="page" id="p-standings"></div><div class="page" id="p-market-surge"></div><div class="page" id="p-league-projections"></div><div class="page" id="p-grid-projections"></div><div class="page" id="p-operations"></div><div class="page" id="p-calendar"></div><div class="page" id="p-auction"></div><div class="page" id="p-rules"></div><div class="page" id="p-archive"></div>
+<div class="page" id="p-home"></div><div class="page" id="p-standings"></div><div class="page" id="p-market-surge"></div><div class="page" id="p-league-projections"></div><div class="page" id="p-grid-projections"></div><div class="page" id="p-cyber-monday"></div><div class="page" id="p-operations"></div><div class="page" id="p-calendar"></div><div class="page" id="p-auction"></div><div class="page" id="p-rules"></div><div class="page" id="p-archive"></div>
 </main>
 <footer>THE GRID // DARK WEB DYNASTY 1 // LIVE DATA FROM SLEEPER</footer>
 <script>
@@ -81,7 +81,7 @@ async function load(){ if(S)return S;
   tx.sort((a,b)=>b.created-a.created);
   let week=lg.settings.leg||1;try{const st=await get('state/nfl');if(st&&st.week&&st.season_type=='regular')week=Math.min(st.week,18)}catch(e){}
   const wk={};await Promise.all([...Array(week).keys()].map(async i=>{try{wk[i+1]=await get(`league/${LID}/matchups/${i+1}`)}catch(e){}}));
-  S={teams,tx:tx.filter(x=>x.status=='complete'),season:lg.season,status:lg.status,live:true,week,wk};
+  S={teams,rpl:rosters.map(r=>({rid:r.roster_id,players:r.players||[]})),tx:tx.filter(x=>x.status=='complete'),season:lg.season,status:lg.status,live:true,week,wk};
  }catch(e){S={teams:SNAP.teams,tx:SNAP.tx,season:'2026',status:'in_season',live:false}}
  const miss=[...new Set(S.tx.flatMap(x=>[...Object.keys(x.adds||{}),...Object.keys(x.drops||{})]))].filter(i=>!NAMES[i]);
  if(miss.length&&S.live){try{const P=await get('players/nfl');miss.forEach(i=>{const p=P[i];NAMES[i]=p?(p.full_name||i):i})}catch(e){}}
@@ -90,11 +90,12 @@ const team=(s,rid)=>s.teams.find(t=>t.rid==rid)||{user:'?',av:''};
 const who=t=>`<span class="who"><img src="${av(t.av)}" onerror="this.style.display='none'">${t.user}</span>`;
 const ago=ms=>{const m=(Date.now()-ms)/6e4;if(m<60)return Math.round(m)+'m';if(m<1440)return Math.round(m/60)+'h';return Math.round(m/1440)+'d'};
 const pn=i=>NAMES[i]||i;
+const cyberTag=i=>{const c=typeof CASS!='undefined'&&CASS.find(x=>x[0]==i);return c?' <span class="pill waiver">CYBER MONDAY // '+c[2].split(' - ')[1].toUpperCase()+'</span>':''};
 const ph=i=>`<img class="phs" src="https://sleepercdn.com/content/nfl/players/thumb/${i}.jpg" onerror="this.style.display='none'">`;
 function txRow(s,x){const rs=x.roster_ids||[];let d='';
  const ad=Object.entries(x.adds||{}),dr=Object.entries(x.drops||{});
  if(x.type=='trade'){const sides=rs.map(r=>`${team(s,r).user} gets ${[...ad.filter(a=>a[1]==r).map(a=>ph(a[0])+pn(a[0])),...(x.draft_picks||[]).filter(p=>p.owner_id==r).map(p=>`${p.season} R${p.round}`)].join(', ')||'picks'}`);d=sides.join('<br>')}
- else d=[...ad.map(a=>`<span class="plus">+ ${ph(a[0])}${pn(a[0])}</span>`),...dr.map(a=>`<span class="minus">− ${ph(a[0])}${pn(a[0])}</span>`)].join('  ');
+ else d=[...ad.map(a=>`<span class="plus">+ ${ph(a[0])}${pn(a[0])}</span>${cyberTag(a[0])}`),...dr.map(a=>`<span class="minus">− ${ph(a[0])}${pn(a[0])}</span>`)].join('  ');
  const ty=x.type=='trade'?'trade':x.type=='waiver'?'waiver':'free agent';
  return `<div class="row"><span class="t">${ago(x.created)} ago</span><span class="pill ${x.type}">${ty}</span><span>${rs.map(r=>who(team(s,r))).join(' ⇄ ')}</span><span class="d">${d}</span></div>`}
 function feed(s,n,filter){let l=s.tx;if(filter&&filter!='all')l=l.filter(x=>x.type==filter);return l.slice(0,n).map(x=>txRow(s,x)).join('')||'<div class="empty">Nothing yet.</div>'}
@@ -260,7 +261,8 @@ ${LPR.sb&&LPR.sb.done?`<div class="champ"><div><div class="sub" style="font-size
 function opsIndex(){return `${OPSCSS}<div class="ops">${hd('/OPERATIONS','OPERATIONS','// Side games running inside The Grid. Pick a module.')}<div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
 <a class="card" href="#/market-surge"><small>MODULE 01 // RAFFLE</small><h3>MARKET SURGE</h3><p>One entry per trade in the window. Weighted draw for the Cyber Monday budget.</p></a>
 <a class="card" href="#/league-projections"><small>MODULE 02 // LOCKED</small><h3>LEAGUE PROJECTIONS</h3><p>NFL playoff prediction game. 15 Gridcoin to the top score.</p></a>
-<a class="card" href="#/grid-projections"><small>MODULE 03 // LIVE</small><h3>GRID PROJECTIONS</h3><p>Predict the final dynasty standings. Scored from live standings, 15 Gridcoin to the top score.</p></a></div></div>`}
+<a class="card" href="#/grid-projections"><small>MODULE 03 // LIVE</small><h3>GRID PROJECTIONS</h3><p>Predict the final dynasty standings. Scored from live standings, 15 Gridcoin to the top score.</p></a>
+<a class="card" href="#/cyber-monday"><small>MODULE 04 // LIVE</small><h3>CYBER MONDAY MARKET</h3><p>Bid Market budget on 5 injected assets across Black Friday weekend. Waivers run on Cyber Monday.</p></a></div></div>`}
 function gp(s){const G=gpData(s),N=G.rows.length;
  const ord=[...G.rows].sort((a,b)=>b.with_bonus-a.with_bonus||a.total_err-b.total_err);
  const cnt=v=>G.rows.filter(m=>m.with_bonus==v).length,rk=m=>1+G.rows.filter(x=>x.with_bonus>m.with_bonus).length;
@@ -277,7 +279,13 @@ ${G.live?`<div style="border:1px solid #ffb02e;color:#ffb02e;padding:8px 10px;fo
 <div class="wrap"><table class="hm"><thead><tr><th style="text-align:left">Manager:</th>${G.results.map((t,i)=>`<th><img src="${A(t)}" style="width:20px;height:20px;object-fit:cover;display:block;margin:0 auto 2px" onerror="this.style.visibility='hidden'"><span style="font-size:9px;font-weight:400">${t}</span><br>${i+1}</th>`).join('')}</tr></thead><tbody>${G.rows.map(m=>`<tr><td class="nm">${m.name}</td>${m.err.map(e=>`<td style="background:${hc(e)}">${e}</td>`).join('')}</tr>`).join('')}<tr><td class="nm" style="border:1px solid #fff">LEAGUE AVG ERROR</td>${G.avg.map(v=>`<td style="background:#1f2433;color:#fff;border:1px solid #fff">${v.toFixed(1)}</td>`).join('')}</tr></tbody></table></div>
 <div style="font-size:11px;color:var(--dim);line-height:1.7">Scoring: lose one point for each rank you were off, for every manager (max 72). Prize: 15 Gridcoin to the top score. Picks come from the league projections sheet (snapshot).</div></div>`}
 
-const ARCH=`<div class="sec"><h2>Archive</h2><p>Past events and lost files</p></div><div class="box"><h3 class="rus" style="color:var(--g);margin-bottom:6px">DWD1: THE GRID — CYBER MONDAY MARKET</h3><p class="note">Five invaluable assets injected into the Grid. Bids run across Black Friday weekend; the Market refreshes on Cyber Monday. Each asset is listed on Sleeper as the placeholder player tagged on its card. Click any voucher for full size.</p><div class="vouchers"><a href="dwd1-voucher-01.png"><img src="dwd1-voucher-01.png" alt="Asset 01 - 10 Point Voucher"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/11192.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>Malik Flowers</b><span>WR</span><i>(Placeholder)</i></span></span></a><a href="dwd1-voucher-02.png"><img src="dwd1-voucher-02.png" alt="Asset 02 - Single Player Double TD Bonus"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/11197.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>Joel Honigford</b><span>TE</span><i>(Placeholder)</i></span></span></a><a href="dwd1-voucher-03.png"><img src="dwd1-voucher-03.png" alt="Asset 03 - 15 Gridcoin"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/11204.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>Duece Watts</b><span>WR</span><i>(Placeholder)</i></span></span></a><a href="dwd1-voucher-04.png"><img src="dwd1-voucher-04.png" alt="Asset 04 - +10 Cyber Market Budget"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/11209.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>Henry Pearson</b><span>RB</span><i>(Placeholder)</i></span></span></a><a href="dwd1-voucher-05.png"><img src="dwd1-voucher-05.png" alt="Asset 05 - Mute Button"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/11210.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>Malik Heath</b><span>WR</span><i>(Placeholder)</i></span></span></a></div></div>`;
+const ARCH=`<div class="sec"><h2>Archive</h2><p>Past events and lost files</p></div><div class="empty">Nothing filed yet.</div>`;
+const CASS=[['11192','dwd1-voucher-01.png','Asset 01 - 10 Point Voucher','Malik Flowers','WR'],['11197','dwd1-voucher-02.png','Asset 02 - Single Player Double TD Bonus','Joel Honigford','TE'],['11204','dwd1-voucher-03.png','Asset 03 - 15 Gridcoin','Duece Watts','WR'],['11209','dwd1-voucher-04.png','Asset 04 - +10 Cyber Market Budget','Henry Pearson','RB'],['11210','dwd1-voucher-05.png','Asset 05 - Mute Button','Malik Heath','WR']];
+function cyberPg(s){const card=c=>{const[pid,png,alt,name,pos]=c;const o=(s.rpl||[]).find(r=>r.players.includes(pid));const t=o?team(s,o.rid):null;
+ return `<a href="${png}"><img src="${png}" alt="${alt}"><span class="vtag"><img class="vhs" loading="lazy" src="https://sleepercdn.com/content/nfl/players/thumb/${pid}.jpg" onerror="this.style.display='none'"><span class="vmeta"><b>${name}</b><span>${pos}</span><i>(Placeholder)</i></span></span><span class="vwin">${t?`WINNER: <img src="${av(t.av)}" onerror="this.style.display='none'"> ${t.user}`:(s.live?'OPEN — waivers run Cyber Monday':'OFFLINE — winner tracking unavailable')}</span></a>`};
+ return OPSCSS+`<div class="ops">${CIRC}<div class="crumb">&gt; OPERATIONS // CYBER_MONDAY_MARKET.EXE</div></div>
+<div class="sec"><h2>Cyber Monday Market</h2><p>DWD1: The Grid // asset injection</p></div>
+<div class="box"><h3 class="rus" style="color:var(--g);margin-bottom:6px">DWD1: THE GRID — CYBER MONDAY MARKET</h3><p class="note">Five invaluable assets injected into the Grid. Bids run across Black Friday weekend; the Market refreshes on Cyber Monday. Each asset is listed on Sleeper as the placeholder player tagged on its card. Winner tags update automatically once waivers run. Click any voucher for full size.</p><div class="vouchers">${CASS.map(card).join('')}</div></div>`}
 const LS='https://www.leaguesafe.com/';
 const CAL=[
 ['January','System Lock','Rosters lock and trading is disabled until yearly investments (buy-ins) are paid.'],
@@ -480,7 +488,7 @@ function newsSet(i){SI=(i+ST.length)%ST.length;const el=$('nw');if(el){el.innerH
 function bindNews(){const el=$('nw');el.querySelectorAll('.it').forEach(e=>e.onclick=()=>{newsSet(+e.dataset.i);clearInterval(STM);STM=setInterval(()=>newsSet(SI+1),9000)});const on=el.querySelector('.it.on');if(on&&el.querySelector('.side').scrollWidth>el.querySelector('.side').clientWidth)on.parentNode.scrollLeft=on.offsetLeft-10;const m=el.querySelector('.main'),s=el.querySelector('.side');if(m&&s)s.style.maxHeight=matchMedia('(max-width:760px)').matches?'':m.offsetHeight+'px'}
 function newsInit(){clearInterval(STM);SI=0;const el=$('nw');if(!el)return;el.innerHTML=newsHTML();bindNews();STM=setInterval(()=>{if(!$('nw')||!$('p-home').classList.contains('on'))return;newsSet(SI+1)},9000)}
 
-const PAGES=['home','operations','standings','transactions','market-surge','league-projections','grid-projections','calendar','auction','rules','archive'];
+const PAGES=['home','operations','standings','transactions','market-surge','league-projections','grid-projections','cyber-monday','calendar','auction','rules','archive'];
 if(!$('p-transactions')){const d=document.createElement('div');d.className='page';d.id='p-transactions';$('p-home').parentNode.appendChild(d)}
 
 const CALCSS=`<style>
@@ -507,11 +515,12 @@ const done={};
 async function route0(){if(/^#\/(standings|calendar)$/.test(location.hash))history.replaceState(null,'','#/');const p=(location.hash.replace('#/','')||'home');const pg=PAGES.includes(p)?p:'home';
  document.querySelectorAll('.page').forEach(e=>e.classList.toggle('on',e.id=='p-'+pg));
  document.querySelectorAll('.nav a[data-p]').forEach(a=>a.classList.toggle('on',a.dataset.p==pg||(pg=='transactions'&&a.dataset.p=='home')));
- $('ops').classList.toggle('on',['operations','market-surge','league-projections','grid-projections'].includes(pg));
+ $('ops').classList.toggle('on',['operations','market-surge','league-projections','grid-projections','cyber-monday'].includes(pg));
  window.scrollTo(0,0);if(done[pg])return;done[pg]=1;const el=$('p-'+pg);el.innerHTML='<div class="empty">LOADING…</div>';
  if(pg=='league-projections'){el.innerHTML=lp();lpLive();return}
  if(pg=='grid-projections'){const s=await load();el.innerHTML=gp(s);return}
  if(pg=='archive'){el.innerHTML=ARCH;return}
+ if(pg=='cyber-monday'){const s=await load();el.innerHTML=cyberPg(s);return}
  if(pg=='operations'){el.innerHTML=opsIndex();return}
  if(pg=='calendar'){el.innerHTML=calendar();return}
  if(pg=='rules'){el.innerHTML=rules();return}
