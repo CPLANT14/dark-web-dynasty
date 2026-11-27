@@ -306,7 +306,10 @@ function ddFix(){const m=opsDD.querySelector('.m');m.style.left='';m.style.right
 opsDD.addEventListener('mouseenter',ddFix);opsDD.addEventListener('focusin',ddFix);
 function ov(html){let d=document.getElementById('ovx');if(!d){d=document.createElement('div');d.id='ovx';d.className='vlb';d.onclick=e=>{if(e.target===d)vclose2()};document.body.appendChild(d)}d.innerHTML=html+'<button class="vback" type="button" onclick="vclose2()">&lt; BACK</button>';d.classList.add('on');document.body.style.overflow='hidden'}
 function vclose2(){const d=document.getElementById('ovx');if(d)d.classList.remove('on');document.body.style.overflow=''}
-function muOpen(w,mid){const s=MS;if(!s)return;const cur=(s.wk&&s.wk[w])||[];const g={};cur.forEach(x=>{(g[x.matchup_id]=g[x.matchup_id]||[]).push(x)});const pr=g[mid];if(!pr||pr.length!=2)return;
+let PLD=false;
+async function muOpen(w,mid){const s=MS;if(!s)return;const cur=(s.wk&&s.wk[w])||[];const g={};cur.forEach(x=>{(g[x.matchup_id]=g[x.matchup_id]||[]).push(x)});const pr=g[mid];if(!pr||pr.length!=2)return;
+ const miss=[...new Set(pr.flatMap(x=>x.starters||[]))].filter(i=>!NAMES[i]);
+ if(miss.length&&!PLD){PLD=true;try{const P=await get('players/nfl');miss.forEach(i=>{const q=P[i];NAMES[i]=q?(q.full_name||i):i})}catch(e){PLD=false}}
  const side=x=>{const t=team(s,x.roster_id);const rows=(x.starters||[]).map(id=>({id,p:(x.players_points||{})[id]||0}));
   return `<div style="flex:1;min-width:150px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><img src="${av(t.av)}" style="width:20px;height:20px;border-radius:50%"><b>${t.user}</b><span style="margin-left:auto;color:var(--g)">${x.points.toFixed(1)}</span></div>${rows.map(r=>`<div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--deep)"><span>${pn(r.id)}</span><span>${r.p.toFixed(1)}</span></div>`).join('')}</div>`};
  ov(`<div style="font-size:10px;letter-spacing:2px;color:var(--dim);margin-bottom:6px">WEEK ${w} MATCHUP</div><div class="ovc">${side(pr[0])}${side(pr[1])}</div>`)}
