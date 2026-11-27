@@ -347,7 +347,7 @@ const NCSS=`<style>
 .nw .hl .rs{width:32px;height:32px;border:2px solid #cfe0d4;border-radius:50%;display:grid;place-items:center;font:700 11px 'Fira Code';color:#cfe0d4;flex:none}
 .nw .hl h2{font:700 clamp(18px,3vw,26px) 'Rajdhani','Fira Code';color:#ffb02e;letter-spacing:.5px}
 .nw .bd{padding:14px;font:600 clamp(15px,2.2vw,20px) 'Rajdhani','Fira Code';color:#fff;line-height:1.35;min-height:84px}
-.nw .side{border:2px solid #d9e6dc;background:#05100a;display:flex;flex-direction:column}
+.nw .side{border:2px solid #d9e6dc;background:#05100a;display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:thin}
 .nw .it{display:flex;gap:10px;padding:9px 10px;border-bottom:1px solid #2a3a30;cursor:pointer;align-items:flex-start;border-left:3px solid transparent}
 .nw .it:hover{background:#0e1712}.nw .it.on{background:#12201a;border-left-color:#ff9a1f}
 .nw .it img{width:44px;height:44px;border:1px solid #9fb3a6;object-fit:cover;flex:none;background:#0b1a12}
@@ -472,7 +472,7 @@ ${art(sd)}
 <div class="side">${ST.map((t,i)=>`<div class="it ${i==SI?'on':''}" data-i="${i}"><i class="th" style="background:${TH[t.t][0]};border-color:${TH[t.t][1]}"><svg viewBox="0 0 200 200" fill="none" stroke="${TH[t.t][1]}" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">${ICON[t.t]}</svg></i><div><b>${t.k}</b><span>${t.h}</span></div></div>`).join('')}</div>
 <div class="tk"><div>${(TICK.length?TICK:ST.map(t=>t.h+': '+t.b)).map(x=>`<em>▶</em>${x}`).join('')}</div></div>`}
 function newsSet(i){SI=(i+ST.length)%ST.length;const el=$('nw');if(el){el.innerHTML=newsHTML();bindNews()}}
-function bindNews(){const el=$('nw');el.querySelectorAll('.it').forEach(e=>e.onclick=()=>{newsSet(+e.dataset.i);clearInterval(STM);STM=setInterval(()=>newsSet(SI+1),9000)});const on=el.querySelector('.it.on');if(on&&el.querySelector('.side').scrollWidth>el.querySelector('.side').clientWidth)on.parentNode.scrollLeft=on.offsetLeft-10}
+function bindNews(){const el=$('nw');el.querySelectorAll('.it').forEach(e=>e.onclick=()=>{newsSet(+e.dataset.i);clearInterval(STM);STM=setInterval(()=>newsSet(SI+1),9000)});const on=el.querySelector('.it.on');if(on&&el.querySelector('.side').scrollWidth>el.querySelector('.side').clientWidth)on.parentNode.scrollLeft=on.offsetLeft-10;const m=el.querySelector('.main'),s=el.querySelector('.side');if(m&&s)s.style.maxHeight=matchMedia('(max-width:760px)').matches?'':m.offsetHeight+'px'
 function newsInit(){clearInterval(STM);SI=0;const el=$('nw');if(!el)return;el.innerHTML=newsHTML();bindNews();STM=setInterval(()=>{if(!$('nw')||!$('p-home').classList.contains('on'))return;newsSet(SI+1)},9000)}
 
 const PAGES=['home','operations','standings','transactions','market-surge','league-projections','grid-projections','calendar','auction','rules','archive'];
