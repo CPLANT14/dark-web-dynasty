@@ -311,14 +311,18 @@ const DEFPOS=['QB','RB','RB','WR','WR','WR','TE','FLEX','FLEX','SUPER_FLEX'];
 const gNcdf=z=>{const t=1/(1+.2316419*Math.abs(z)),d=.3989423*Math.exp(-z*z/2),q=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-q:q};
 const gRem=x=>(x.starters||[]).filter(id=>!((x.players_points||{})[id]>0)).length;
 const gWinp=(a,b)=>{const m=a.points-b.points,sd=9*Math.sqrt(gRem(a)+gRem(b));return sd?Math.round(100*gNcdf(m/sd)):(m>0?100:m<0?0:50)};
-async function muOpen(w,mid){const s=MS;if(!s)return;const cur=(s.wk&&s.wk[w])||[];const g={};cur.forEach(x=>{(g[x.matchup_id]=g[x.matchup_id]||[]).push(x)});const pr=g[mid];if(!pr||pr.length!=2)return;
+function muNav(w,rid){const s=MS;if(!s||w<1||w>17)return;const cur=(s.wk&&s.wk[w])||[];const x=cur.find(q=>q.roster_id==rid);
+ if(!x){ov('<div style="display:flex;align-items:center;justify-content:center;gap:16px;font-size:10px;letter-spacing:2px;color:var(--dim);margin-bottom:8px">'+(w>1?'<span style="cursor:pointer;color:var(--g)" onclick="muNav('+(w-1)+','+rid+')">&lt; WK '+(w-1)+'</span>':'<span style="display:inline-block;min-width:52px"></span>')+'<span>WEEK '+w+' MATCHUP</span>'+(w<17?'<span style="cursor:pointer;color:var(--g)" onclick="muNav('+(w+1)+','+rid+')">WK '+(w+1)+' &gt;</span>':'<span style="display:inline-block;min-width:52px"></span>')+'</div><div class="empty" style="padding:34px 12px;text-align:center">No matchup posted for this week yet.</div>');return}
+ muOpen(w,x.matchup_id,rid)}
+async function muOpen(w,mid,lrid){const s=MS;if(!s)return;const cur=(s.wk&&s.wk[w])||[];const g={};cur.forEach(x=>{(g[x.matchup_id]=g[x.matchup_id]||[]).push(x)});const pr=g[mid];if(!pr||pr.length!=2)return;if(lrid&&pr[1].roster_id==lrid)pr.reverse();
  const ids=[...new Set(pr.flatMap(x=>[...(x.starters||[]),...(x.players||[])]))];
  const need=ids.filter(i=>!PL[i]);
  if(need.length&&!PLD){PLD=true;try{const P=await get('players/nfl');need.forEach(i=>{const q=P[i];PL[i]=q?{n:q.full_name||i,pos:q.position||'',tm:q.team||''}:{n:i,pos:'',tm:''};NAMES[i]=NAMES[i]||PL[i].n})}catch(e){PLD=false}}
  const [a,b]=pr,ta=team(s,a.roster_id),tb=team(s,b.roster_id);
  const rec=r=>{const t=s.teams.find(q=>q.rid==r);return t?t.w+'-'+t.l+(t.t?'-'+t.t:''):''};
  const slots=(s.pos&&s.pos.length?s.pos:DEFPOS).map(x=>String(x).replace('SUPER_FLEX','SFX').replace('REC_FLEX','RFX'));
- const started=(w<s.week)||(s.status=='complete')||cur.some(x=>x.points>0);
+ const done=(w<s.week)||(s.status=='complete');
+ const started=done||cur.some(x=>x.points>0);
  const info=id=>{const q=PL[id]||{n:NAMES[id]||id,pos:'',tm:''};return q.n+(q.pos||q.tm?' <i style="font-style:normal;color:var(--dim);font-size:9px">'+q.pos+(q.pos&&q.tm?' \u00b7 ':'')+q.tm+'</i>':'')};
  const sp=(x,i)=>(x.starters_points||[])[i]!=null?(x.starters_points||[])[i]:((x.players_points||{})[(x.starters||[])[i]]||0);
  const nS=Math.max((a.starters||[]).length,(b.starters||[]).length);
@@ -332,10 +336,10 @@ async function muOpen(w,mid){const s=MS;if(!s)return;const cur=(s.wk&&s.wk[w])||
   brows+='<div style="display:grid;grid-template-columns:1fr 44px 1fr;gap:6px;align-items:center;padding:3px 0;border-bottom:1px solid var(--deep);font-size:11px;color:var(--dim)"><div style="text-align:right">'+(ra?info(ra.id)+' <b>'+ra.p.toFixed(1)+'</b>':'')+'</div><div></div><div>'+(rb?'<b>'+rb.p.toFixed(1)+'</b> '+info(rb.id):'')+'</div></div>'}
  const aw=a.points>b.points,bw=b.points>a.points;
  const pa=started?gWinp(a,b):50,pb=100-pa;
- ov('<div style="font-size:10px;letter-spacing:2px;color:var(--dim);margin-bottom:8px">WEEK '+w+' MATCHUP</div>'+
+ ov('<div style="display:flex;align-items:center;justify-content:center;gap:16px;font-size:10px;letter-spacing:2px;color:var(--dim);margin-bottom:8px">'+(w>1?'<span style="cursor:pointer;color:var(--g)" onclick="muNav('+(w-1)+','+a.roster_id+')">&lt; WK '+(w-1)+'</span>':'<span style="display:inline-block;min-width:52px"></span>')+'<span>WEEK '+w+' MATCHUP</span>'+(w<17?'<span style="cursor:pointer;color:var(--g)" onclick="muNav('+(w+1)+','+a.roster_id+')">WK '+(w+1)+' &gt;</span>':'<span style="display:inline-block;min-width:52px"></span>')+'</div>'+
  '<div style="width:min(680px,92vw)">'+
  '<div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:4px"><img src="'+av(ta.av)+'" style="width:30px;height:30px;border-radius:50%"><div style="text-align:right"><div style="font-size:13px;font-weight:700;'+(started&&aw?'color:var(--g)':'')+'">'+ta.user+'</div><div style="font-size:9px;color:var(--dim)">'+rec(a.roster_id)+'</div></div><b style="font-size:22px;min-width:150px;text-align:center">'+(started?a.points.toFixed(1)+' \u2013 '+b.points.toFixed(1):'vs')+'</b><div><div style="font-size:13px;font-weight:700;'+(started&&bw?'color:var(--g)':'')+'">'+tb.user+'</div><div style="font-size:9px;color:var(--dim)">'+rec(b.roster_id)+'</div></div><img src="'+av(tb.av)+'" style="width:30px;height:30px;border-radius:50%"></div>'+
- (started?'<div style="display:flex;align-items:center;gap:8px;margin:4px 0 10px" title="Live win probability: current margin plus starters still to play (estimate, not from Sleeper)"><span style="font-size:10px;min-width:34px;text-align:right;color:'+(pa>=pb?'var(--g)':'var(--dim)')+'">'+pa+'%</span><span style="flex:1;height:4px;background:#401010;border-radius:2px;overflow:hidden;display:flex"><i style="width:'+pa+'%;background:var(--g)"></i></span><span style="font-size:10px;min-width:34px;color:'+(pb>pa?'var(--g)':'var(--dim)')+'">'+pb+'%</span></div>':'<div style="margin-bottom:10px"></div>')+
+ (started&&!done?'<div style="display:flex;align-items:center;gap:8px;margin:4px 0 10px" title="Live win probability: current margin plus starters still to play (estimate, not from Sleeper)"><span style="font-size:10px;min-width:34px;text-align:right;color:'+(pa>=pb?'var(--g)':'var(--dim)')+'">'+pa+'%</span><span style="flex:1;height:4px;background:#401010;border-radius:2px;overflow:hidden;display:flex"><i style="width:'+pa+'%;background:var(--g)"></i></span><span style="font-size:10px;min-width:34px;color:'+(pb>pa?'var(--g)':'var(--dim)')+'">'+pb+'%</span></div>':'<div style="margin-bottom:10px"></div>')+
  '<div class="ovc" style="display:block;width:100%;max-height:54vh;overflow:auto">'+rows+'<div style="text-align:center;color:var(--dim);font-size:9px;letter-spacing:2px;padding:10px 0 2px">BENCH</div>'+brows+'</div>'+
  '</div>')}
 const LS='https://www.leaguesafe.com/';
