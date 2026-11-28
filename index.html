@@ -301,7 +301,7 @@ const VAPPS='https://script.google.com/macros/s/AKfycbyrQx72vExC98m0WoEpu61MpWHB
 function vkey(){try{return localStorage.getItem('dwdCkey')||''}catch(e){return ''}}
 (function(){try{const m=/[?&]ckey=([A-Za-z0-9_-]+)/.exec(location.hash);if(m){localStorage.setItem('dwdCkey',m[1]);history.replaceState(null,'',location.pathname+location.search+location.hash.replace(/[?&]ckey=[A-Za-z0-9_-]+/,''))}}catch(e){}})();
 let VREMOTE=null;
-function vPend(){try{return JSON.parse(localStorage.getItem('dwdVuse')||'{}')}catch(e){return {}}}
+function vPend(){try{const p=JSON.parse(localStorage.getItem('dwdVuse')||'{}');const nw=Date.now();let ch=false;for(const i in p){if(!p[i].ts||nw-p[i].ts>600000){delete p[i];ch=true}}if(ch)try{localStorage.setItem('dwdVuse',JSON.stringify(p))}catch(e){}return p}catch(e){return {}}}
 async function vCheckKey(){const k=vkey();if(!k)return;try{const r=await fetch(VAPPS+'?ping=1&key='+encodeURIComponent(k));const j=await r.json();if(!(j&&j.ok)){try{localStorage.removeItem('dwdCkey');localStorage.removeItem('dwdVuse')}catch(e){}}}catch(e){}}
 function vParseTs(v){const m=/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/.exec(v||'');return m?Date.UTC(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]):0}
 async function vLoadRemote(){return vLoadData()}
@@ -358,8 +358,8 @@ async function cPhSave(ci){const hid=document.getElementById('cu-phv'+ci),msg=do
  if(msg)msg.textContent='Saved - publishing...';setTimeout(()=>{vLoadSettings().then(()=>{cOpen();cPaint()})},8000)}
 async function cMark(ci){if(!vkey())return;const s=MS||await load();const el=document.getElementById('cu-w'+ci);const te=document.getElementById('cu-t'+ci);if(!s||!el||!te)return;const c=CASS[ci];let note='r'+te.value;
  if(ci===1){const pe=document.getElementById('cu-p1v');if(!pe||!pe.value)return;if(PL[pe.value]&&PL[pe.value].pos==='QB'){const pi=document.getElementById('cu-p1');if(pi){pi.value='';pi.placeholder='QBs not eligible - pick a non-QB'}pe.value='';return}note+='|p'+pe.value}
- const p=vPend();p[ci]={action:'Used',rid:+te.value,week:+el.value,date:new Date().toISOString().slice(0,10),note:note};try{localStorage.setItem('dwdVuse',JSON.stringify(p))}catch(e){}vPost(c[2],'Used',+el.value,note);vEnsureStats().then(cPaint);cRefresh()}
-function cUndo(ci){if(!vkey())return;const c=CASS[ci];const cur=vuseAll()[ci]||{};const p=vPend();p[ci]={action:'Unused',week:cur.week||'',date:new Date().toISOString().slice(0,10)};try{localStorage.setItem('dwdVuse',JSON.stringify(p))}catch(e){}vPost(c[2],'Unused',cur.week||'-');cRefresh()}
+ const p=vPend();p[ci]={action:'Used',ts:Date.now(),rid:+te.value,week:+el.value,date:new Date().toISOString().slice(0,10),note:note};try{localStorage.setItem('dwdVuse',JSON.stringify(p))}catch(e){}vPost(c[2],'Used',+el.value,note);vEnsureStats().then(cPaint);cRefresh()}
+function cUndo(ci){if(!vkey())return;const c=CASS[ci];const cur=vuseAll()[ci]||{};const p=vPend();p[ci]={action:'Unused',ts:Date.now(),week:cur.week||'',date:new Date().toISOString().slice(0,10)};try{localStorage.setItem('dwdVuse',JSON.stringify(p))}catch(e){}vPost(c[2],'Unused',cur.week||'-');cRefresh()}
 function cPaint(){if(location.hash.indexOf('cyber-monday')>=0)load().then(s=>{const el=document.getElementById('p-cyber-monday');if(el)el.innerHTML=cyberPg(s)})}
 function cRefresh(){cOpen();cPaint()}
 function vlb(e,src){e.preventDefault();let d=document.getElementById('vlb');if(!d){d=document.createElement('div');d.id='vlb';d.className='vlb';d.onclick=vclose;document.body.appendChild(d)}d.innerHTML='<img src="'+src+'" alt="voucher full size"><button class="vback" type="button">&lt; BACK</button>';d.classList.add('on');document.body.style.overflow='hidden';return false}
