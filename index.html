@@ -310,6 +310,7 @@ async function vEnsureStats(){const u=vuseAll();const ws={};for(const i in u){if
 function vTdPts(pid,w){const st=VSTATS[w]&&VSTATS[w][pid];if(!st)return 0;const sc=(S&&S.scoring)||{};return (st.pass_td||0)*(sc.pass_td||0)+(st.rush_td||0)*(sc.rush_td||0)+(st.rec_td||0)*(sc.rec_td||0)}
 function vbonus(rid,w){const u=vuseAll();let p=0,tag=false;for(const i in u){const e=u[i];if(!e)continue;const nt=String(e.note||'');const rm=/r(\d+)/.exec(nt);const pm=/\|p(\d+)/.exec(nt);let ur=rm?+rm[1]:(e.rid!=null?e.rid:null);if(ur==null&&S){const o=(S.rpl||[]).find(r=>r.players.includes(CASS[i][0]));ur=o?o.rid:null}if(ur==null||ur!=rid||+e.week!==+w)continue;
  if(+i===0){p+=10;tag=true}else if(+i===1&&pm){p+=vTdPts(pm[1],w);tag=true}}return tag?p:null}
+function vPlyBonus(rid,w){const u=vuseAll();const out={};for(const i in u){const e=u[i];if(!e||+i!==1)continue;const nt=String(e.note||'');const rm=/r(\d+)/.exec(nt),pm=/\|p(\d+)/.exec(nt);let ur=rm?+rm[1]:(e.rid!=null?e.rid:null);if(ur==null&&S){const o=(S.rpl||[]).find(r=>r.players.includes(CASS[i][0]));ur=o?o.rid:null}if(ur==null||ur!=rid||+e.week!==+w||!pm)continue;out[pm[1]]=(out[pm[1]]||0)+vTdPts(pm[1],w)}return out}
 function vPost(asset,action,week,note){const k=vkey();if(!k)return;try{const fd=new FormData();fd.append('key',k);fd.append('asset',asset);fd.append('action',action);fd.append('week',String(week));fd.append('note',String(note||''));fetch(VAPPS,{method:'POST',mode:'no-cors',body:fd}).then(()=>{setTimeout(()=>{vLoadRemote().then(()=>vEnsureStats()).then(vRepaint)},20000)},()=>{})}catch(e){}}
 function vapply(s,pr,w){return pr.map(x=>{const p=vbonus(x.roster_id,w);return p==null?x:Object.assign({},x,{points:x.points+p,vtag:p})})}
 const vscore=x=>x.points.toFixed(1)+(x.vtag!=null?'<span style="color:'+(x.vtag>0?'var(--amber)':'var(--dim)')+';font-size:10px;font-weight:700" title="'+(x.vtag>0?'Includes +'+x.vtag+' commissioner-applied voucher bonus':'A scoring voucher was applied here; it added 0 points this week (for Double TD, the player had no TDs)')+'"> +'+x.vtag+'</span>':'');
@@ -365,6 +366,8 @@ async function muOpen(w,mid,lrid){const s=MS;if(!s)return;const cur=(s.wk&&s.wk[
  const need=ids.filter(i=>!PL[i]);
  if(need.length&&!PLD){PLD=true;try{const P=await get('players/nfl');for(const i in P){const q=P[i];PL[i]={n:q.full_name||i,pos:q.position||'',tm:q.team||''}}need.forEach(i=>{if(!PL[i])PL[i]={n:NAMES[i]||i,pos:'',tm:''};NAMES[i]=NAMES[i]||PL[i].n})}catch(e){PLD=false}}
  let [a,b]=vapply(s,pr,w);const ta=team(s,a.roster_id),tb=team(s,b.roster_id);
+ const pba=vPlyBonus(a.roster_id,w),pbb=vPlyBonus(b.roster_id,w);
+ const ptag=(m,id)=>m[id]!=null?' <span style="color:'+(m[id]>0?'var(--amber)':'var(--dim)')+';font-size:10px;font-weight:700" title="Double TD voucher: this player\'s TD points count double this week (commissioner-applied)">+'+m[id]+' DOUBLE TD</span>':'';
  const rec=r=>{const t=s.teams.find(q=>q.rid==r);return t?t.w+'-'+t.l+(t.t?'-'+t.t:''):''};
  const slots=(s.pos&&s.pos.length?s.pos:DEFPOS).map(x=>String(x).replace('SUPER_FLEX','SFX').replace('REC_FLEX','RFX'));
  const done=(w<s.week)||(s.status=='complete');
@@ -374,12 +377,12 @@ async function muOpen(w,mid,lrid){const s=MS;if(!s)return;const cur=(s.wk&&s.wk[
  const nS=Math.max((a.starters||[]).length,(b.starters||[]).length);
  let rows='';
  for(let i=0;i<nS;i++){const ia=(a.starters||[])[i],ib=(b.starters||[])[i];
-  rows+='<div style="display:grid;grid-template-columns:1fr 60px 1fr;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--deep);font-size:14px"><div style="text-align:right">'+(ia?info(ia)+' <b style="color:var(--g)">'+(+sp(a,i)).toFixed(1)+'</b>':'')+'</div><div style="text-align:center;color:var(--dim);font-size:10px;letter-spacing:1px">'+(slots[i]||'')+'</div><div>'+(ib?'<b style="color:var(--g)">'+(+sp(b,i)).toFixed(1)+'</b> '+info(ib):'')+'</div></div>'}
+  rows+='<div style="display:grid;grid-template-columns:1fr 60px 1fr;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--deep);font-size:14px"><div style="text-align:right">'+(ia?info(ia)+' <b style="color:var(--g)">'+(+sp(a,i)).toFixed(1)+'</b>'+ptag(pba,ia):'')+'</div><div style="text-align:center;color:var(--dim);font-size:10px;letter-spacing:1px">'+(slots[i]||'')+'</div><div>'+(ib?'<b style="color:var(--g)">'+(+sp(b,i)).toFixed(1)+'</b>'+ptag(pbb,ib)+' '+info(ib):'')+'</div></div>'}
  const bench=x=>{const st=new Set(x.starters||[]);return (x.players||[]).filter(id=>!st.has(id)).map(id=>({id,p:(x.players_points||{})[id]||0})).sort((m,n)=>n.p-m.p)};
  const ba=bench(a),bb=bench(b),nb=Math.max(ba.length,bb.length);
  let brows='';
  for(let i=0;i<nb;i++){const ra=ba[i],rb=bb[i];
-  brows+='<div style="display:grid;grid-template-columns:1fr 60px 1fr;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--deep);font-size:13px;color:var(--dim)"><div style="text-align:right">'+(ra?info(ra.id)+' <b>'+ra.p.toFixed(1)+'</b>':'')+'</div><div></div><div>'+(rb?'<b>'+rb.p.toFixed(1)+'</b> '+info(rb.id):'')+'</div></div>'}
+  brows+='<div style="display:grid;grid-template-columns:1fr 60px 1fr;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--deep);font-size:13px;color:var(--dim)"><div style="text-align:right">'+(ra?info(ra.id)+' <b>'+ra.p.toFixed(1)+'</b>'+ptag(pba,ra.id):'')+'</div><div></div><div>'+(rb?'<b>'+rb.p.toFixed(1)+'</b>'+ptag(pbb,rb.id)+' '+info(rb.id):'')+'</div></div>'}
  const aw=a.points>b.points,bw=b.points>a.points;
  const pa=started?gWinp(a,b):50,pb=100-pa;
  ov('<div style="display:flex;align-items:center;justify-content:center;gap:16px;font-size:11px;letter-spacing:2px;color:var(--dim);margin-bottom:8px">'+(w>1?'<span style="cursor:pointer;color:var(--g)" onclick="muNav('+(w-1)+','+a.roster_id+')">&lt; WK '+(w-1)+'</span>':'<span style="display:inline-block;min-width:52px"></span>')+'<span>WEEK '+w+' MATCHUP</span>'+(w<17?'<span style="cursor:pointer;color:var(--g)" onclick="muNav('+(w+1)+','+a.roster_id+')">WK '+(w+1)+' &gt;</span>':'<span style="display:inline-block;min-width:52px"></span>')+'</div>'+
