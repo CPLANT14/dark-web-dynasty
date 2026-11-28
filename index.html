@@ -86,7 +86,7 @@ async function load(){ if(S)return S;
  }catch(e){S={teams:SNAP.teams,tx:SNAP.tx,season:'2026',status:'in_season',live:false}}
  const miss=[...new Set(S.tx.flatMap(x=>[...Object.keys(x.adds||{}),...Object.keys(x.drops||{})]))].filter(i=>!NAMES[i]);
  if(miss.length&&S.live){try{const P=await get('players/nfl');miss.forEach(i=>{const p=P[i];NAMES[i]=p?(p.full_name||i):i})}catch(e){}}
- try{await vLoadRemote();await vLoadSettings();await vEnsureStats()}catch(e){}
+ try{await vCheckKey();await vLoadRemote();await vLoadSettings();await vEnsureStats()}catch(e){}
  return S}
 const team=(s,rid)=>s.teams.find(t=>t.rid==rid)||{user:'?',av:''};
 const who=t=>`<span class="who"><img src="${av(t.av)}" onerror="this.style.display='none'">${t.user}</span>`;
@@ -302,6 +302,7 @@ function vkey(){try{return localStorage.getItem('dwdCkey')||''}catch(e){return '
 (function(){try{const m=/[?&]ckey=([A-Za-z0-9_-]+)/.exec(location.hash);if(m){localStorage.setItem('dwdCkey',m[1]);history.replaceState(null,'',location.pathname+location.search+location.hash.replace(/[?&]ckey=[A-Za-z0-9_-]+/,''))}}catch(e){}})();
 let VREMOTE=null;
 function vPend(){try{return JSON.parse(localStorage.getItem('dwdVuse')||'{}')}catch(e){return {}}}
+async function vCheckKey(){const k=vkey();if(!k)return;try{const r=await fetch(VAPPS+'?ping=1&key='+encodeURIComponent(k));const j=await r.json();if(!(j&&j.ok)){try{localStorage.removeItem('dwdCkey');localStorage.removeItem('dwdVuse')}catch(e){}}}catch(e){}}
 function vParseTs(v){const m=/Date\((\d+),(\d+),(\d+),(\d+),(\d+),(\d+)\)/.exec(v||'');return m?Date.UTC(+m[1],+m[2],+m[3],+m[4],+m[5],+m[6]):0}
 async function vLoadRemote(){return vLoadData()}
 function vuseAll(){const u={};if(VREMOTE)for(const i in VREMOTE){const r=VREMOTE[i];if(r.action==='Used')u[i]={week:r.week,date:r.ts?new Date(r.ts).toISOString().slice(0,10):'',note:r.note||''}}const p=vkey()?vPend():{};for(const i in p){if(p[i].action==='Used')u[i]={week:p[i].week,date:p[i].date,rid:p[i].rid,note:p[i].note||'',pending:true};else if(p[i].action==='Unused')delete u[i]}return u}
